@@ -12,9 +12,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-            
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = ViewController()
+            
+        let tabBarController = UITabBarController()
+        let lottoViewController = UINavigationController(rootViewController: LottoViewController())
+        let boxOfficeViewController = UINavigationController(rootViewController: BoxOfficeViewController())
+        
+        tabBarController.setViewControllers([lottoViewController, boxOfficeViewController], animated: true)
+        
+        if let items = tabBarController.tabBar.items {
+            items[0].selectedImage = UIImage(systemName: "faxmachine.fill")
+            items[0].image = UIImage(systemName: "faxmachine")
+            items[0].title = "로또"
+            
+            items[1].selectedImage = UIImage(systemName: "ticket.fill")
+            items[1].image = UIImage(systemName: "ticket")
+            items[1].title = "박스오피스"
+        }
+        
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
 

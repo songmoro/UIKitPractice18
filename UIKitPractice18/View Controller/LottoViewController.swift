@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  LottoViewController.swift
 //  UIKitPractice18
 //
 //  Created by 송재훈 on 7/23/25.
@@ -63,7 +63,7 @@ class CircleView: UIView {
     }
 }
 
-class ViewController: UIViewController {
+class LottoViewController: UIViewController {
     /**
      회차 텍스트필드
      */
@@ -95,6 +95,9 @@ class ViewController: UIViewController {
         return label
     }()
     
+    /**
+     구분선
+     */
     let separatorView: UIView = {
         let view = UIView()
         view.backgroundColor = .opaqueSeparator
@@ -133,7 +136,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController {
+extension LottoViewController {
     func configureView() {
         view.addSubviews(roundTextField, descriptionLabel, dateLabel, separatorView, resultLabel, numberStackView)
         
@@ -182,35 +185,30 @@ extension ViewController {
         
         (1...8).forEach {
             let view: UIView
+            let randomIndex = Int.random(in: 0..<(numbers.count))
             
-            if $0 == 7 {
-                view = CircleView(width: 40)
-                view.backgroundColor = colors[$0 - 1]
-            }
-            else {
-                let randomIndex = Int.random(in: 0..<(numbers.count))
+            switch $0 {
+            case 0...7:
+                view = ($0 == 7) ? CircleView(width: 40) : CircleView(width: 40, number: numbers.remove(at: randomIndex))
                 
-                if $0 != 8 {
-                    view = CircleView(width: 40, number: numbers.remove(at: randomIndex))
-                    view.backgroundColor = colors[$0 - 1]
-                }
-                else {
-                    let stackView = UIStackView()
-                    stackView.axis = .vertical
-                    stackView.alignment = .center
-                    
-                    let bonusLabel = UILabel()
-                    bonusLabel.text = "보너스"
-                    bonusLabel.font = .systemFont(ofSize: 14)
-                    
-                    let numberView = CircleView(width: 40, number: numbers.remove(at: randomIndex))
-                    numberView.backgroundColor = colors[$0 - 1]
-                    
-                    stackView.addArrangedSubview(numberView)
-                    stackView.addArrangedSubview(bonusLabel)
-                    
-                    view = stackView
-                }
+                view.backgroundColor = colors[$0 - 1]
+            case 8:
+                let stackView = UIStackView()
+                stackView.axis = .vertical
+                stackView.alignment = .center
+                
+                view = stackView
+                
+                let numberView = CircleView(width: 40, number: numbers.remove(at: randomIndex))
+                numberView.backgroundColor = colors[$0 - 1]
+                
+                let bonusLabel = UILabel()
+                bonusLabel.text = "보너스"
+                bonusLabel.font = .systemFont(ofSize: 14)
+                
+                stackView.addArrangedSubview(numberView)
+                stackView.addArrangedSubview(bonusLabel)
+            default: return
             }
             
             numberViews.append(view)
@@ -224,7 +222,7 @@ extension ViewController {
     }
 }
 
-extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+extension LottoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     var items: [Int] {
         Array(1...1181)
     }
