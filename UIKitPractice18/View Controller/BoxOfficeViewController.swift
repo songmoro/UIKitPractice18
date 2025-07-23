@@ -64,6 +64,7 @@ class MovieCell: UITableViewCell, IsIdentifiable {
     let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "엽문 4: 더 파이널"
+        label.lineBreakMode = .byTruncatingTail
         
         return label
     }()
@@ -94,20 +95,29 @@ class MovieCell: UITableViewCell, IsIdentifiable {
             $0.width.equalToSuperview().multipliedBy(0.15)
         }
         
+        titleLabel.setContentCompressionResistancePriority(dateLabel.contentCompressionResistancePriority(for: .horizontal) - 1, for: .horizontal)
         titleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalTo(ratingView.snp.trailing).offset(12)
-            $0.trailing.equalTo(dateLabel).inset(12)
         }
         
         dateLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+            $0.leading.greaterThanOrEqualTo(titleLabel.snp.trailing).offset(20).priority(.high)
             $0.trailing.equalToSuperview().inset(12)
         }
+    }
+    
+    func update(row: Int, _ movie: Movie) {
+        ratingView.ratingLabel.text = "\(row)"
+        titleLabel.text = movie.title
+        dateLabel.text = movie.releaseDate
     }
 }
 
 class BoxOfficeViewController: UIViewController {
+    var movies = MovieInfo.movies
+    
     let searchTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .none
@@ -133,8 +143,6 @@ class BoxOfficeViewController: UIViewController {
         return button
     }()
     
-    let movies = MovieInfo.movies
-    
     let tableView: UITableView = {
         let tableView = UITableView()
         tableView.keyboardDismissMode = .interactive
@@ -145,8 +153,10 @@ class BoxOfficeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         configure()
         configureTableView()
+        configureTextField()
     }
 }
 
@@ -183,12 +193,24 @@ extension BoxOfficeViewController {
     }
 }
 
+extension BoxOfficeViewController: UITextFieldDelegate {
+    func configureTextField() {
+        searchTextField.delegate = self
+        searchButton.addTarget(self, action: #selector(shuffle), for: .touchUpInside)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        shuffle()
+        
+        return true
+    }
+}
+
 extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
     func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.layer.borderColor = UIColor.blue.cgColor
-        tableView.layer.borderWidth = 2
+        
         tableView.register(MovieCell.self)
     }
     
@@ -199,7 +221,18 @@ extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(MovieCell.self, for: indexPath)
         
+        if let cell = cell as? MovieCell {
+            let movie = movies[indexPath.row]
+            cell.update(row: indexPath.row + 1, movie)
+        }
         
         return cell
+    }
+    
+    @objc func shuffle() {
+        view.endEditing(true)
+        
+        movies.shuffle()
+        tableView.reloadData()
     }
 }
