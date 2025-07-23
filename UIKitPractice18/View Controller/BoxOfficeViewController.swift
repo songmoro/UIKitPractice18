@@ -129,3 +129,7 @@ extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.reloadData()
     }
 }
+
+#Preview {
+    BoxOfficeViewController()
+}

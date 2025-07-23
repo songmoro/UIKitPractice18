@@ -165,6 +165,10 @@ extension LottoViewController {
         super.touchesBegan(touches, with: event)
         view.endEditing(true)
     }
+    
+//    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+//        
+//    }
 }
 
 extension LottoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
@@ -200,4 +204,8 @@ extension LottoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         resultLabel.text = "\(items[row].description)회 당첨결과"
         configureStackView()
     }
+}
+
+#Preview {
+    LottoViewController()
 }
