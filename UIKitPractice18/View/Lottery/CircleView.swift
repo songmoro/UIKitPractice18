@@ -8,12 +8,8 @@
 import UIKit
 import SnapKit
 
-class CircleView: UIView {
+class CircleView: BaseView {
     let numberLabel = UILabel()
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     convenience init(width: CGFloat, number: Int) {
         self.init(length: width, number: number)

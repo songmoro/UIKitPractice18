@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Alamofire
 
-class BoxOfficeViewController: UIViewController {
+class BoxOfficeViewController: BaseViewController {
     var movies = [Movie]()
     
     lazy var searchTextField: UITextField = {
@@ -79,7 +79,6 @@ extension BoxOfficeViewController {
     func configure() {
         let searchTextFieldUnderline = UIView(backgroundColor: .label)
         
-        view.backgroundColor = .systemBackground
         view.addSubviews(searchTextField, searchTextFieldUnderline, searchButton, tableView)
         
         [searchTextField, tableView].snp.makeConstraints {

@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class MovieCell: UITableViewCell, IsIdentifiable {
+class MovieCell: BaseTableViewCell, IsIdentifiable {
     let ratingView = RatingView()
     
     let titleLabel: UILabel = {
@@ -24,10 +24,6 @@ class MovieCell: UITableViewCell, IsIdentifiable {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     func configure() {

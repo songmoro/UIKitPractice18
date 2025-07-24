@@ -9,7 +9,7 @@ import UIKit
 import Alamofire
 import SnapKit
 
-class LotteryViewController: UIViewController {
+class LotteryViewController: BaseViewController {
     /**
      회차 텍스트필드
      */
@@ -59,7 +59,6 @@ class LotteryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
         
         configureView()
         configurePicker()

@@ -7,14 +7,9 @@
 
 #if canImport(UIKit)
     import UIKit
-#else
-    import AppKit
-#endif
-
-
-#if canImport(UIKit)
     public typealias ConstraintView = UIView
 #else
+    import AppKit
     public typealias ConstraintView = NSView
 #endif
 
