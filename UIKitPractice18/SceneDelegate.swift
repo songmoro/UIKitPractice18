@@ -15,10 +15,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
             
         let tabBarController = UITabBarController()
-        let lottoViewController = UINavigationController(rootViewController: LottoViewController())
+        let lotteryViewController = UINavigationController(rootViewController: LotteryViewController())
         let boxOfficeViewController = UINavigationController(rootViewController: BoxOfficeViewController())
         
-        tabBarController.setViewControllers([lottoViewController, boxOfficeViewController], animated: true)
+        tabBarController.setViewControllers([lotteryViewController, boxOfficeViewController], animated: true)
         
         if let items = tabBarController.tabBar.items {
             items[0].selectedImage = UIImage(systemName: "faxmachine.fill")

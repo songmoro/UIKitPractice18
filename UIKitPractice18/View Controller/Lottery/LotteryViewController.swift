@@ -1,5 +1,5 @@
 //
-//  LottoViewController.swift
+//  LotteryViewController.swift
 //  UIKitPractice18
 //
 //  Created by 송재훈 on 7/23/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class LottoViewController: UIViewController {
+class LotteryViewController: UIViewController {
     /**
      회차 텍스트필드
      */
@@ -81,7 +81,7 @@ class LottoViewController: UIViewController {
     }
 }
 
-extension LottoViewController {
+extension LotteryViewController {
     func configureView() {
         view.addSubviews(roundTextField, descriptionLabel, dateLabel, separatorView, resultLabel, numberStackView)
         
@@ -171,7 +171,7 @@ extension LottoViewController {
 //    }
 }
 
-extension LottoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     var items: [Int] {
         Array(1...1181)
     }
@@ -207,5 +207,5 @@ extension LottoViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 }
 
 #Preview {
-    LottoViewController()
+    LotteryViewController()
 }
