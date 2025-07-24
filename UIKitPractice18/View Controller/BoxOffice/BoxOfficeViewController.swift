@@ -14,6 +14,7 @@ class BoxOfficeViewController: BaseViewController {
     
     lazy var searchTextField: UITextField = {
         let textField = UITextField(borderStyle: .none)
+        textField.keyboardType = .numbersAndPunctuation
         textField.placeholder = "20200401"
         textField.delegate = self
         
