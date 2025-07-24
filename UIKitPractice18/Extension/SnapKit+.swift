@@ -5,10 +5,22 @@
 //  Created by 송재훈 on 7/24/25.
 //
 
-import UIKit
+#if canImport(UIKit)
+    import UIKit
+#else
+    import AppKit
+#endif
+
+
+#if canImport(UIKit)
+    public typealias ConstraintView = UIView
+#else
+    public typealias ConstraintView = NSView
+#endif
+
 import SnapKit
 
-extension [UIView] {
+extension [ConstraintView] {
     var snp: [ConstraintViewDSL] {
         map(\.snp)
     }
@@ -17,7 +29,7 @@ extension [UIView] {
 extension [ConstraintViewDSL] {
     func makeConstraints(_ closure: (_ make: ConstraintMaker) -> Void) {
         self.forEach { constraintView in
-            (constraintView.target as! UIView).snp.makeConstraints(closure)
+            (constraintView.target as! ConstraintView).snp.makeConstraints(closure)
         }
     }
     
