@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 import SnapKit
 
 class LotteryViewController: UIViewController {
@@ -13,7 +14,6 @@ class LotteryViewController: UIViewController {
      회차 텍스트필드
      */
     let roundTextField: UITextField = {
-        // TODO: 키보드 입력 방지
         let textField = UITextField()
         textField.borderStyle = .roundedRect
         
