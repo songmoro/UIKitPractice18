@@ -169,12 +169,6 @@ extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension Date {
-    var yesterday: Date {
-        Calendar.current.date(byAdding: DateComponents(day: -1), to: self)!
-    }
-}
-
 #Preview {
     BoxOfficeViewController()
 }
