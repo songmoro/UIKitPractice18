@@ -12,19 +12,13 @@ class MovieCell: UITableViewCell, IsIdentifiable {
     let ratingView = RatingView()
     
     let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "엽문 4: 더 파이널"
+        let label = UILabel(text: "엽문 4: 더 파이널")
         label.lineBreakMode = .byTruncatingTail
         
         return label
     }()
     
-    let dateLabel: UILabel = {
-        let label = UILabel()
-        label.text = "8888-88-88"
-        
-        return label
-    }()
+    let dateLabel = UILabel(text: "8888-88-88")
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

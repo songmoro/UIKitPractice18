@@ -10,8 +10,7 @@ import SnapKit
 
 class RatingView: UIView {
     let ratingLabel: UILabel = {
-        let label = UILabel()
-        label.text = "888"
+        let label = UILabel(text: "888")
         label.textColor = .systemBackground
         
         return label

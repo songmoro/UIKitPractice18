@@ -13,32 +13,17 @@ class LotteryViewController: UIViewController {
     /**
      회차 텍스트필드
      */
-    let roundTextField: UITextField = {
-        let textField = UITextField()
-        textField.borderStyle = .roundedRect
-        
-        return textField
-    }()
+    let roundTextField = UITextField(borderStyle: .roundedRect)
     
     /**
      당첨번호 안내 레이블
      */
-    let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.text = "당첨번호 안내"
-        
-        return label
-    }()
+    let descriptionLabel = UILabel(text: "당첨번호 안내")
     
     /**
      추첨 날짜 레이블
      */
-    let dateLabel: UILabel = {
-        let label = UILabel()
-        label.text = "2020-05-30 추첨"
-        
-        return label
-    }()
+    let dateLabel = UILabel(text: "2020-05-30 추첨")
     
     /**
      구분선
@@ -147,8 +132,7 @@ extension LotteryViewController {
                 let numberView = CircleView(width: 40, number: numbers.remove(at: randomIndex))
                 numberView.backgroundColor = colors[$0 - 1]
                 
-                let bonusLabel = UILabel()
-                bonusLabel.text = "보너스"
+                let bonusLabel = UILabel(text: "보너스")
                 bonusLabel.font = .systemFont(ofSize: 14)
                 
                 stackView.addArrangedSubview(numberView)
@@ -165,10 +149,6 @@ extension LotteryViewController {
         super.touchesBegan(touches, with: event)
         view.endEditing(true)
     }
-    
-//    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-//        
-//    }
 }
 
 extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {

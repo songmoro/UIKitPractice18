@@ -8,6 +8,11 @@
 import UIKit
 
 extension UIView {
+    convenience init(backgroundColor: UIColor) {
+        self.init()
+        self.backgroundColor = backgroundColor
+    }
+    
     func addSubviews(_ views: UIView...) {
         views.forEach {
             self.addSubview($0)

@@ -12,20 +12,14 @@ class BoxOfficeViewController: UIViewController {
     var movies = MovieInfo.movies
     
     let searchTextField: UITextField = {
-        let textField = UITextField()
-        textField.borderStyle = .none
+        let textField = UITextField(borderStyle: .none)
         textField.placeholder = "20200401"
         
         return textField
     }()
     
     // TODO: 보관/폐기 고민
-    let searchTextFieldUnderline: UIView = {
-        let view = UIView()
-        view.backgroundColor = .label
-        
-        return view
-    }()
+    let searchTextFieldUnderline = UIView(backgroundColor: .label)
     
     let searchButton: UIButton = {
         let button = UIButton()
