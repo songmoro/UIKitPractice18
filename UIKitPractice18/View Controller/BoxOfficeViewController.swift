@@ -12,15 +12,13 @@ import Alamofire
 class BoxOfficeViewController: UIViewController {
     var movies = [Movie]()
     
-    let searchTextField: UITextField = {
+    lazy var searchTextField: UITextField = {
         let textField = UITextField(borderStyle: .none)
         textField.placeholder = "20200401"
+        textField.delegate = self
         
         return textField
     }()
-    
-    // TODO: 보관/폐기 고민
-    let searchTextFieldUnderline = UIView(backgroundColor: .label)
     
     let searchButton: UIButton = {
         let button = UIButton()
@@ -43,17 +41,44 @@ class BoxOfficeViewController: UIViewController {
         return tableView
     }()
     
+    let dotDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy. MM. dd."
+        
+        return dateFormatter
+    }()
+    
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        
+        return dateFormatter
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        call()
         configure()
-        configureTextField()
+        
+        // TODO: formstyle
+        let yesterday = Date().yesterday.formatted(.dateTime
+            .year()
+            .month(.twoDigits)
+            .day(.twoDigits)
+            .locale(Locale(identifier: "ko-KR"))
+        )
+        
+        let yesterdayDate = dotDateFormatter.date(from: yesterday)!
+        let yesterdayText = dateFormatter.string(from: yesterdayDate)
+        
+        call(yesterdayText)
     }
 }
 
 extension BoxOfficeViewController {
     func configure() {
+        let searchTextFieldUnderline = UIView(backgroundColor: .label)
+        
         view.backgroundColor = .systemBackground
         view.addSubviews(searchTextField, searchTextFieldUnderline, searchButton, tableView)
         
@@ -71,6 +96,7 @@ extension BoxOfficeViewController {
             $0.height.equalTo(48)
         }
         
+        searchButton.addTarget(self, action: #selector(didEndEditing), for: .touchUpInside)
         searchButton.snp.makeConstraints {
             $0.leading.equalTo(searchTextField.snp.trailing).offset(12)
             $0.height.centerY.equalTo(searchTextField)
@@ -86,18 +112,22 @@ extension BoxOfficeViewController {
             $0.bottom.equalToSuperview(\.safeAreaLayoutGuide)
         }
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+        super.touchesBegan(touches, with: event)
+    }
 }
 
 extension BoxOfficeViewController: UITextFieldDelegate {
-    func configureTextField() {
-        searchTextField.delegate = self
-//        searchButton.addTarget(self, action: #selector(shuffle), for: .touchUpInside)
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        didEndEditing()
+        return true
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    @objc func didEndEditing() {
         view.endEditing(true)
-        
-        return true
+        call(searchTextField.text!)
     }
 }
 
@@ -117,9 +147,11 @@ extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    func call() {
+    func call(_ date: String) {
+        guard dateFormatter.date(from: date) != nil else { return }
+        
         let url = URL(string: "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json")!
-        let parameters = BoxOfficeParameters(key: Secret.boxOfficeApiKey, targetDt: "20250723")
+        let parameters = BoxOfficeParameters(key: Secret.boxOfficeApiKey, targetDt: date)
         
         AF.request(url, method: .get, parameters: parameters)
             .validate(statusCode: 200..<300)
@@ -134,6 +166,12 @@ extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
                     break
                 }
             }
+    }
+}
+
+extension Date {
+    var yesterday: Date {
+        Calendar.current.date(byAdding: DateComponents(day: -1), to: self)!
     }
 }
 
