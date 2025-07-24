@@ -33,20 +33,22 @@ class MovieCell: UITableViewCell, IsIdentifiable {
     func configure() {
         addSubviews(ratingView, titleLabel, dateLabel)
         
+        [ratingView, titleLabel, dateLabel].snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+        }
+        
         ratingView.snp.makeConstraints {
-            $0.leading.centerY.equalToSuperview()
+            $0.leading.equalToSuperview()
             $0.height.equalToSuperview().multipliedBy(0.8)
             $0.width.equalToSuperview().multipliedBy(0.15)
         }
         
         titleLabel.setContentCompressionResistancePriority(dateLabel.contentCompressionResistancePriority(for: .horizontal) - 1, for: .horizontal)
         titleLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
             $0.leading.equalTo(ratingView.snp.trailing).offset(12)
         }
         
         dateLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
             $0.leading.greaterThanOrEqualTo(titleLabel.snp.trailing).offset(20).priority(.high)
             $0.trailing.equalToSuperview().inset(12)
         }

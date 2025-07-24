@@ -50,19 +50,24 @@ class BoxOfficeViewController: UIViewController {
 extension BoxOfficeViewController {
     func configure() {
         view.backgroundColor = .systemBackground
-        
         view.addSubviews(searchTextField, searchTextFieldUnderline, searchButton, tableView)
+        
+        [searchTextField, tableView].snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(16)
+        }
+        
+        [searchButton, tableView].snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
+        }
         
         searchTextField.snp.makeConstraints {
             $0.top.equalToSuperview(\.safeAreaLayoutGuide).offset(20)
-            $0.leading.equalToSuperview().offset(16)
             $0.width.equalToSuperview().multipliedBy(0.65)
             $0.height.equalTo(48)
         }
         
         searchButton.snp.makeConstraints {
             $0.leading.equalTo(searchTextField.snp.trailing).offset(12)
-            $0.trailing.equalToSuperview().inset(16)
             $0.height.centerY.equalTo(searchTextField)
         }
         
@@ -72,8 +77,6 @@ extension BoxOfficeViewController {
         }
         
         tableView.snp.makeConstraints {
-            $0.leading.equalTo(searchTextField)
-            $0.trailing.equalTo(searchButton)
             $0.top.equalTo(searchTextField.snp.bottom).offset(12)
             $0.bottom.equalToSuperview(\.safeAreaLayoutGuide)
         }

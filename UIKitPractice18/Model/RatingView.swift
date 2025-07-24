@@ -30,7 +30,7 @@ class RatingView: UIView {
         backgroundColor = .label
         
         ratingLabel.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview()
+            $0.center.equalToSuperview()
         }
     }
 }

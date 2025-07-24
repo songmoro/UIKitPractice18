@@ -23,17 +23,7 @@ class LotteryViewController: UIViewController {
     /**
      추첨 날짜 레이블
      */
-    let dateLabel = UILabel(text: "2020-05-30 추첨")
-    
-    /**
-     구분선
-     */
-    let separatorView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .opaqueSeparator
-        
-        return view
-    }()
+    let dateLabel = UILabel(text: "0000-00-00 추첨")
     
     /**
      회차 + 당첨결과 레이블
@@ -57,6 +47,16 @@ class LotteryViewController: UIViewController {
      */
     var numberViews = [UIView]()
     
+    /**
+     피커 뷰 아이템
+     */
+    var items: [Int] = Array(1...1181)
+    
+    /**
+     번호 색깔
+     */
+    let colors: [UIColor] = [.systemYellow, .systemBlue, .systemBlue, .systemRed, .systemRed, .systemGray, .clear, .systemGray]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -68,27 +68,31 @@ class LotteryViewController: UIViewController {
 
 extension LotteryViewController {
     func configureView() {
+        let separatorView = UIView(backgroundColor: .opaqueSeparator)
         view.addSubviews(roundTextField, descriptionLabel, dateLabel, separatorView, resultLabel, numberStackView)
         
+        [roundTextField, descriptionLabel, separatorView, numberStackView].snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+        }
+        
+        [roundTextField, dateLabel, separatorView, numberStackView].snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(24)
+        }
+        
         roundTextField.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(24)
             $0.top.equalToSuperview(\.safeAreaLayoutGuide).inset(20)
             $0.height.equalTo(44)
         }
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(roundTextField.snp.bottom).offset(24)
-            $0.leading.equalTo(roundTextField.snp.leading)
         }
         
         dateLabel.snp.makeConstraints {
             $0.centerY.equalTo(descriptionLabel)
-            $0.trailing.equalTo(roundTextField.snp.trailing)
         }
         
         separatorView.snp.makeConstraints {
-            $0.leading.equalTo(descriptionLabel.snp.leading)
-            $0.trailing.equalTo(dateLabel.snp.trailing)
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(12)
             $0.height.equalTo(1)
         }
@@ -100,37 +104,34 @@ extension LotteryViewController {
         
         numberStackView.snp.makeConstraints {
             $0.top.equalTo(resultLabel.snp.bottom).offset(28)
-            $0.horizontalEdges.equalToSuperview().inset(24)
             $0.height.equalTo(60)
         }
     }
     
-    func configureStackView() {
-        var numbers = Array(1...45)
-        let colors: [UIColor] = [.systemYellow, .systemBlue, .systemBlue, .systemRed, .systemRed, .systemGray, .clear, .systemGray]
-        
+    func configureStackView(_ numbers: [Int]) {
         numberViews.forEach {
             $0.removeFromSuperview()
         }
         
-        (1...8).forEach {
+        (0...7).forEach {
             let view: UIView
-            let randomIndex = Int.random(in: 0..<(numbers.count))
             
             switch $0 {
-            case 0...7:
-                view = ($0 == 7) ? CircleView(width: 40) : CircleView(width: 40, number: numbers.remove(at: randomIndex))
-                
-                view.backgroundColor = colors[$0 - 1]
-            case 8:
+            case 0...5:
+                view = CircleView(width: 40, number: numbers[$0])
+                view.backgroundColor = colors[$0]
+            case 6:
+                view = CircleView(width: 40)
+                view.backgroundColor = colors[$0]
+            case 7:
                 let stackView = UIStackView()
                 stackView.axis = .vertical
                 stackView.alignment = .center
                 
                 view = stackView
                 
-                let numberView = CircleView(width: 40, number: numbers.remove(at: randomIndex))
-                numberView.backgroundColor = colors[$0 - 1]
+                let numberView = CircleView(width: 40, number: numbers[$0])
+                numberView.backgroundColor = colors[$0]
                 
                 let bonusLabel = UILabel(text: "보너스")
                 bonusLabel.font = .systemFont(ofSize: 14)
@@ -152,10 +153,6 @@ extension LotteryViewController {
 }
 
 extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    var items: [Int] {
-        Array(1...1181)
-    }
-    
     func configurePicker() {
         let picker = UIPickerView()
         roundTextField.inputView = picker
@@ -180,9 +177,27 @@ extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        roundTextField.text = items[row].description
-        resultLabel.text = "\(items[row].description)회 당첨결과"
-        configureStackView()
+        call(row + 1)
+    }
+    
+    func call(_ round: Int) {
+        let url = URL(string: "https://www.dhlottery.co.kr/common.do")!
+        let parameters = LotteryParameters(method: "getLottoNumber", drwNo: round)
+        
+        // URLEncodedFormParameterEncoder
+        AF.request(url, method: .get, parameters: parameters)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: Lottery.self) {
+                switch $0.result {
+                case .success(let lottery):
+                    self.roundTextField.text = round.description
+                    self.resultLabel.text = "\(round.description)회 당첨결과"
+                    self.dateLabel.text = "\(lottery.drwNoDate) 추첨"
+                    self.configureStackView(lottery.numbers)
+                case .failure:
+                    break
+                }
+            }
     }
 }
 
