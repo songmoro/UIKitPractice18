@@ -5,7 +5,7 @@
 //  Created by 송재훈 on 7/24/25.
 //
 
-struct Lottery: Decodable {
+struct LotteryResponse: Decodable {
     // 2025-07-19
     let drwNoDate: String
     

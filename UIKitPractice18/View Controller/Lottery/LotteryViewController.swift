@@ -187,7 +187,7 @@ extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         // URLEncodedFormParameterEncoder
         AF.request(url, method: .get, parameters: parameters)
             .validate(statusCode: 200..<300)
-            .responseDecodable(of: Lottery.self) {
+            .responseDecodable(of: LotteryResponse.self) {
                 switch $0.result {
                 case .success(let lottery):
                     self.roundTextField.text = round.description

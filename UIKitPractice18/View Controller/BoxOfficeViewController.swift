@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Alamofire
 
 class BoxOfficeViewController: UIViewController {
     var movies = MovieInfo.movies
@@ -30,10 +31,14 @@ class BoxOfficeViewController: UIViewController {
         return button
     }()
     
-    let tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
         tableView.keyboardDismissMode = .interactive
         tableView.separatorStyle = .none
+        
+        tableView.register(MovieCell.self)
         
         return tableView
     }()
@@ -41,8 +46,8 @@ class BoxOfficeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        call()
         configure()
-        configureTableView()
         configureTextField()
     }
 }
@@ -86,24 +91,17 @@ extension BoxOfficeViewController {
 extension BoxOfficeViewController: UITextFieldDelegate {
     func configureTextField() {
         searchTextField.delegate = self
-        searchButton.addTarget(self, action: #selector(shuffle), for: .touchUpInside)
+//        searchButton.addTarget(self, action: #selector(shuffle), for: .touchUpInside)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        shuffle()
+        view.endEditing(true)
         
         return true
     }
 }
 
 extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
-    func configureTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        tableView.register(MovieCell.self)
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         movies.count
     }
@@ -119,12 +117,75 @@ extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    @objc func shuffle() {
-        view.endEditing(true)
+    func call() {
+        let url = URL(string: "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json")!
+        let parameters = BoxOfficeParameters(key: "", targetDt: "20250723")
         
-        movies.shuffle()
-        tableView.reloadData()
+        AF.request(url, method: .get, parameters: parameters)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: BoxOfficeResponse.self) {
+                switch $0.result {
+                case .success(let boxOfficeResponse):
+                    self.movies = boxOfficeResponse.boxOfficeResult.dailyBoxOfficeList.map {
+                        Movie(title: $0.movieNm, releaseDate: $0.openDt, audienceCount: Int($0.rank)!)
+                    }
+                    self.tableView.reloadData()
+                default:
+                    break
+                }
+            }
     }
+}
+
+struct BoxOfficeResponse: Decodable {
+    let boxOfficeResult: BoxOfficeResult
+}
+
+struct BoxOfficeResult: Decodable {
+    let boxofficeType: String
+    let showRange: String
+    let dailyBoxOfficeList: [DailyBoxOfficeList]
+}
+
+struct DailyBoxOfficeList: Decodable {
+    let rnum: String
+    let rank: String
+    let rankInten: String
+    let rankOldAndNew: String
+    let movieCd: String
+    let movieNm: String
+    let openDt: String
+    let salesAmt: String
+    let salesShare: String
+    let salesInten: String
+    let salesChange: String
+    let salesAcc: String
+    let audiCnt: String
+    let audiInten: String
+    let audiChange: String
+    let audiAcc: String
+    let scrnCnt: String
+    let showCnt: String
+}
+
+struct BoxOfficeParameters: Encodable {
+    // key
+    let key: String
+    
+    // yyyymmdd
+    let targetDt: String
+    
+    // "0"..."10", nil
+    let itemPerPage: String? = nil
+    
+    // "Y", "N", nil
+    let multiMovieYn: String? = nil
+    
+    // "K", "F", nil
+    let repNationCd: String? = nil
+    
+    // "0105000000”
+    let wideAreaCd: String? = nil
 }
 
 #Preview {
