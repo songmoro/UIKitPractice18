@@ -10,7 +10,7 @@ import SnapKit
 import Alamofire
 
 class BoxOfficeViewController: UIViewController {
-    var movies = MovieInfo.movies
+    var movies = [Movie]()
     
     let searchTextField: UITextField = {
         let textField = UITextField(borderStyle: .none)
@@ -119,7 +119,7 @@ extension BoxOfficeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func call() {
         let url = URL(string: "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json")!
-        let parameters = BoxOfficeParameters(key: "", targetDt: "20250723")
+        let parameters = BoxOfficeParameters(key: Secret.boxOfficeApiKey, targetDt: "20250723")
         
         AF.request(url, method: .get, parameters: parameters)
             .validate(statusCode: 200..<300)
